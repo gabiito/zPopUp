@@ -1,6 +1,6 @@
 # zPopUp
 
-Una librería lijera para crear pop-up fácil de editar y utilizar.
+Una librería lijera para crear pop-up fácil de editar y utilizar (trabajo en proceso...).
 
 ## Instalación
 
