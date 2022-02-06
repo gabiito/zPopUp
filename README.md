@@ -76,7 +76,7 @@ miPopUp.show();
 Existen algunas funciones disponibles que permiten modificar o agregar nuevo comportamiento al pop-up:
 * [show()](#show)
 
-#### show
+#### show()
 
 ``` javascript
 miPopUp.show();
