@@ -180,11 +180,11 @@ Esta función se ejecuta inmediatamente después de que el usuario realice un cl
 Entendiendo que es un evento diferente salir del pop-up que cancelarlo se generan dos oportunidades de manejarlo.
 ``` javascript
 miPopUp.onBeforeClose({
-		if (confirm("Seguro deseas salir?") === true) {
-			return true; //Si el usuario confirmo la salida se cerrará el pop-up
-		} else {
-			return false; //Caso contrario se mantendrá abierto
-		}
+	if (confirm("Seguro deseas salir?") === true) {
+		return true; //Si el usuario confirmo la salida se cerrará el pop-up
+	} else {
+		return false; //Caso contrario se mantendrá abierto
+	}
 });
 ```
 Utilidad:
