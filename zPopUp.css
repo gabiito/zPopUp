@@ -1,0 +1,473 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+:root {
+    --zpopup-color: #a88fcf;
+    --zpopup-accent-color: #792d83;
+    --zpopup-main-background: #fff;
+    --zpopup-button-text-color: #fff;
+    --zpopup-width: 500px;
+    --zpopup-z-index: 999999;
+}
+
+.zpopup.container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: var(--zpopup-z-index);
+}
+
+.zpopup.container.show {
+    display: grid;
+    transition: background 100ms ease-in;
+}
+
+.zpopup.main-content {
+    font-family: 'Poppins', sans-serif;
+    width: var(--zpopup-width);
+    max-height: fit-content;
+    background-color: var(--zpopup-main-background);
+    border-radius: 8px;
+    padding: 12px;
+    place-self: center;
+    display: none;
+    opacity: 0;
+}
+
+.zpopup.container.show .zpopup.main-content {
+    display: grid;
+    grid-template-rows: auto 3fr auto;
+    transition: transform 250ms linear,
+                opacity 120ms linear;
+}
+
+/*COMMON*/
+.zpopup-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--zpopup-color);
+}
+
+.zpopup-dash {
+    width: 16px;
+    height: 4px;
+    background: var(--zpopup-color);
+}
+
+.zpopup-number {
+    height: 25px;
+    width: 25px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 25px;
+    border-radius: 50%;
+    background: var(--zpopup-color);
+    color: var(--zpopup-button-text-color);
+}
+
+.zpopup-dot.active,
+.zpopup-dash.active,
+.zpopup-number.active {
+    background: var(--zpopup-accent-color);
+    font-weight: bold;
+}
+
+.zpopup-btn {
+    background: var(--zpopup-color);
+    color: var(--zpopup-button-text-color);
+    font-size: 16px;
+    border: 0px;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 150ms ease-in-out;
+}
+
+.zpopup-btn:hover {
+    background: var(--zpopup-accent-color);
+}
+
+/*HEADER & FOOTER SETUP*/
+.zpopup__header,
+.zpopup__footer {
+    position: relative;
+}
+
+.zpopup__header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ccc
+}
+
+.zpopup__footer {
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+}
+
+.zpopup__header__button-close {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.close-x {
+    stroke: black;
+    fill: transparent;
+    stroke-linecap: round;
+    stroke-width: 5;
+}
+
+.zpopup__header__title {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    width: fit-content;
+    gap: 15px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.zpopup__header__title-text {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.zpopup__indicators-dots,
+.zpopup__indicators-dashes,
+.zpopup__indicators-numbers{
+    padding: 10px 0;
+    width: 100%;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.zpopup__footer__buttons {
+    padding: 0 12px;
+}
+
+.zpopup-btn.btn-ok,
+.zpopup-btn.btn-next {
+    float: right;
+}
+
+.zpopup-btn.btn-cancel,
+.zpopup-btn.btn-prev {
+    float: left;
+}
+
+.zpopup__header__button.hidden,
+.zpopup__header__title-icon.hidden,
+.zpopup__header__title-text.hidden,
+.zpopup__indicators-dots.hidden,
+.zpopup__indicators-dashes.hidden,
+.zpopup__indicators-numbers.hidden,
+.zpopup__indicators-dots.hidden,
+.zpopup__indicators-dashes.hidden,
+.zpopup__indicators-numbers.hidden,
+.zpopup__footer__buttons.hidden,
+.zpopup__footer__buttons .hidden {
+    display: none;
+}
+
+/*BODY SETUP*/
+.zpopup__body {
+    padding: 10px 0;
+}
+
+
+/*CUSTOM ICONS*/
+
+.zpopup-next {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
+    border-radius: 100px
+}
+.zpopup-next::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    transform: rotate(-45deg);
+    right: 6px;
+    top: 4px
+}
+
+.zpopup-prev {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
+    border-radius: 100px
+}
+.zpopup-prev::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid;
+    border-left: 2px solid;
+    transform: rotate(45deg);
+    left: 6px;
+    top: 4px
+}
+
+.zpopup-correct {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 22px;
+    height: 22px;
+    border: 2px solid;
+    border-radius: 100px
+}
+
+.zpopup-correct::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    width: 6px;
+    height: 10px;
+    border-color: currentColor;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    transform-origin: bottom left;
+    transform: rotate(45deg)
+}
+
+.zpopup-wrong {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 22px;
+    height: 22px;
+    border: 2px solid;
+    border-radius: 40px
+}
+
+.zpopup-wrong::after,
+.zpopup-wrong::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background: currentColor;
+    transform: rotate(45deg);
+    border-radius: 5px;
+    top: 8px;
+    left: 3px
+}
+
+.zpopup-wrong::after {
+    transform: rotate(-45deg)
+}
+
+.zpopup-comment {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 20px;
+    height: 16px;
+    border: 2px solid;
+    border-bottom: 0;
+    box-shadow:
+    -6px 8px 0 -6px,
+    6px 8px 0 -6px
+   }
+   
+   .zpopup-comment::after,
+   .zpopup-comment::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 8px
+   }
+   
+   .zpopup-comment::before {
+    border: 2px solid;
+    border-top-color: transparent;
+    border-bottom-left-radius: 20px;
+    right: 4px;
+    bottom: -6px;
+    height: 6px
+   }
+   
+   .zpopup-comment::after {
+    height: 2px;
+    background: currentColor;
+    box-shadow: 0 4px 0 0;
+    left: 4px;
+    top: 4px
+   } 
+
+   .zpopup-danger {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 20px;
+    height: 20px;
+    border: 2px solid;
+    border-radius: 40px
+   }
+   
+   .zpopup-danger::after,
+   .zpopup-danger::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 3px;
+    width: 2px;
+    background: currentColor;
+    left: 7px
+   }
+   
+   .zpopup-danger::after {
+    top: 2px;
+    height: 8px
+   }
+   
+   .zpopup-danger::before {
+    height: 2px;
+    bottom: 2px
+   } 
+
+   .zpopup-info {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 20px;
+    height: 20px;
+    border: 2px solid;
+    border-radius: 40px
+   }
+   
+   .zpopup-info::after,
+   .zpopup-info::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 3px;
+    width: 2px;
+    background: currentColor;
+    left: 7px
+   }
+   
+   .zpopup-info::after {
+    bottom: 2px;
+    height: 8px
+   }
+   
+   .zpopup-info::before {
+    height: 2px;
+    top: 2px
+   } 
+
+   .zpopup-mail,
+   .zpopup-mail::after {
+    display: block;
+    box-sizing: border-box;
+    height: 14px;
+    border: 2px solid
+   }
+   
+   .zpopup-mail {
+    overflow: hidden;
+    
+    position: relative;
+    width: 18px;
+    border-radius: 2px
+   }
+   
+   .zpopup-mail::after {
+    content: "";
+    position: absolute;
+    border-radius: 3px;
+    width: 14px;
+    transform: rotate(-45deg);
+    bottom: 3px;
+    left: 0
+   } 
+
+   .zpopup-pin {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: rotate(45deg);
+    width: 18px;
+    height: 18px;
+    border-radius: 100% 100% 0 100%;
+    border: 2px solid;
+    margin-top: -4px
+   }
+   
+   .zpopup-pin::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 2px solid;
+    top: 3px;
+    left: 3px;
+    border-radius: 40px
+   } 
+
+   .zpopup-check {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
+    border-radius: 100px
+   }
+   
+   .zpopup-check::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    width: 6px;
+    height: 10px;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    transform-origin: bottom left;
+    transform: rotate(45deg)
+   } 
