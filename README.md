@@ -24,7 +24,7 @@ Para crear un nuevo zPopUp tenes que crear una nueva instancia del objeto.
 let miPopUp = new zPopUp();
 ```
 
-zPopUp recibe como parámetro un objeto ocional donde se puede configurar varios aspectos.
+zPopUp recibe como parámetro un objeto opcional donde se puede configurar varios aspectos.
 
 ``` javascript
 {
@@ -45,7 +45,7 @@ zPopUp recibe como parámetro un objeto ocional donde se puede configurar varios
   showNextButton, //Renderiza el boton de siguiente ||Def: false
   nextButtonText, //Asigna el texto para el botón de siguiente ||Def: null => '>'
   showPrevButton, //Renderiza el boton de anterior ||Def: false
-  prevButtonText, //Asigna el texto para el botón de cancelación ||Def: null => '<'
+  prevButtonText, //Asigna el texto para el botón de anterior ||Def: null => '<'
   indicatorType, //Asigna el tipo de indicador a utilizar ||Opciones: 'none'* | 'dot' | 'dash' | 'number'
   indicatorPosition, //Asigna la posición del indicador ||Opciones: 'header'* | 'footer'
   htmlPages, //Recibe un array con las páginas a agregar al body del pop-up ||Def: []
