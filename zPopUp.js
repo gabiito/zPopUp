@@ -370,88 +370,20 @@ function zPopUp({
         ppBodyPages.pages.push(html);
     }
 
-    function getBodyPages() {
-        return ppBodyPages.pages;
-    }
-
-    function getPageById(i) {
-        return ppBodyPages.pages[i] ?? null;
-    }
-
-    function setIndicator(indicatorType = null) {
-        if (isIndicatorType(indicatorType)) {
-            indicators.forEach(elem => {
-                if (getElementType(elem) === indicatorType) {
-                    setVisible(elem);
-                }
-                else { setHidden(elem); }
-            });
-        }
-        else {
-            indicators.forEach(elem => setHidden(elem));
-        }
-    }
-
-    /**
-     * Sets the position to de indicator
-     * @param string pos "header" | "footer"
-     * @returns boolean
-     */
-    function setIndicatorPosition(pos) {
-        if (isValidIndicatorPosition(pos)) {
-            if (pos === HEADER_POS && header && header.childElementCount() === 2) {
-                header.append(indicatorsCont);
-                return true;
-            }
-            if (footer && footer.childElementCount() === 0) {
-                footer.append(indicatorsCont);
-                return true;
-            }
-        }
-        return false;
-    }
-
     function setHidden(elem) {
         elem.classList.add(clHIDDEN);
-    }
-
-    function isHidden(elem) {
-        return elem.classList.contains(clHIDDEN);
     }
 
     function setVisible(elem) {
         elem.classList.remove(clHIDDEN);
     }
 
-    function isIndicatorType(key) {
-        return  key && 
-                key === NUMBER_INDICATOR || 
-                key === DOT_INDICATOR ||
-                key === DASH_INDICATOR;
-    }
-
-    function isValidIndicatorPosition(key) {
-        return  key &&
-                key === HEADER_POS ||
-                key === FOOTER_POS;
-    }
-
-    function getElementType(elem) {
-        if (elem.classList.contains(clFOOTER_INDICATORS_DOTS) || elem.classList.contains(clINDICATORS_DOTS)) { return DOT_INDICATOR; }
-        if (elem.classList.contains(clFOOTER_INDICATORS_DASHES) || elem.classList.contains(clINDICATORS_DASHES)) { return DASH_INDICATOR; }
-        if (elem.classList.contains(clFOOTER_INDICATORS_NUMBERS) || elem.classList.contains(clINDICATORS_NUMBERS)) { return NUMBER_INDICATOR; }
-    }
     return {
         show: show,
         onBeforeClose: onBeforeClose,
         onBeforeConfirm: onBeforeConfirm,
         onBeforeCancel: onBeforeCancel,
         setTitle: setTitle,
-        setIndicatorType: setIndicator,
-        setIndicatorPosition: setIndicatorPosition,
-        addPage: addPage,
-        getPages: getBodyPages,
-        getPageById: getPageById,
         setTitleIcon: setTitleIcon
     }
 }
