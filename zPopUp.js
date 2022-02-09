@@ -1,15 +1,7 @@
-/**
- * 
- * @param {title, showFooter} param0 
- * @returns 
- */
 function zPopUp({
-    title = 'zPopUp Title',
+    title = '',
     headerIcon = null,
-    headerBorder = true,
-    
     showFooter = true,
-    footerBorder = true,
     backColor = 'rgba(0,0,0,.4)',
     popUpBackground = null,
     color = null,
@@ -23,13 +15,11 @@ function zPopUp({
     nextButtonText = null,
     showPrevButton = false,
     prevButtonText = null,
-    indicatorType = 'none',
-    indicatorPosition = 'header',
     htmlPages = [],
     html = '',
     width = null,
     zIndex = null,
-    outsideClick = 'exit',
+    outsideClick = 'close',
     customClass = ''
 } = {}) {
     //ClasList & HTML declaration
@@ -85,13 +75,6 @@ function zPopUp({
     let titleCont;
     let titleIcon;
     let titleText;
-    let indicatorsCont;
-    let dotsCont;
-    let dots = [];
-    let dashesCont;
-    let dashes = [];
-    let numbersCont;
-    let numbers = [];
     let ppBody;
     let footer;
     let footerButtons;
@@ -106,9 +89,9 @@ function zPopUp({
         on: 0
     };
 
-    let beforeCancel;
-    let beforeConfirm;
-    let beforeClose;
+    let beforeCancelCB = function () { return new Promise(resolve => {resolve(true)}); };
+    let beforeConfirmCB = function () { return new Promise(resolve => {resolve(true)}); };
+    let beforeCloseCB = function () { return new Promise(resolve => {resolve(true)}); };
 
     /* BEGIN CONSTRUCTOR */
     (function construct(){
@@ -151,16 +134,6 @@ function zPopUp({
         header.append(close);
         header.append(titleCont);
 
-        if ( indicatorType !== 'none' && isIndicatorType(indicatorType)) {
-            indicatorsCont = newElem(div, clINDICATORS);
-            switch ( indicatorType) {
-                case DOT_INDICATOR: 
-                    dotsCont = newElem(div, clINDICATORS_DOTS);
-                    for (let i = 0; i < ppBodyPages.count; i++) {
-                        dots.push(newElem(div, clDOTS));
-                    }
-            }
-        }
         mainContent.append(header);
 
         ppBody = newElem(div, clBODY);
@@ -183,7 +156,7 @@ function zPopUp({
             if (showOkButton) {
                 btnOk = newElem(btn, clBTN_OK, 'zpopup-Ok');
                 btnOk.innerHTML = okButtonText ?? 'OK';
-                btnOk.addEventListener('click', () => {
+                btnOk.addEventListener('click', async () => {
                     closePopUp(evtOk);
                 });
                 footerButtons.append(btnOk);
@@ -240,38 +213,31 @@ function zPopUp({
     }
 
     async function closePopUp(evt = '') { 
-        let check;
         switch (evt) {
             case evtOk:
-                check = await checkBefore(beforeConfirm);
-                if (check === 1 || check === -1) {
-                    await hide();
-                }
+                await checkBefore(beforeConfirmCB);
                 break;
             case evtCancel:
-                check = await checkBefore(beforeCancel);
-                if (check === 1 || check === -1) {
-                    await hide();
-                }
+                await checkBefore(beforeCancelCB);
                 break;
             case evtClose:
-                check = await checkBefore(beforeClose);
-                if (check === 1 || check === -1) {
-                    await hide();
-                }
+                await checkBefore(beforeCloseCB);
                 break;
             default: await hide();
         }
     }
-    
-    async function checkBefore(action = null) {
-        if (typeof action === 'function') {
-            let res = await action();
-            return res === true ? 1 : 0;
-        }
-        else { return -1; }
-    }
 
+    async function checkBefore(action) {
+        try {
+            let res = await action();
+            if (res === true) {
+                await hide();
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
 
     async function hide(timeout = 200) {
         container.style.background = 'transparent';
@@ -301,28 +267,41 @@ function zPopUp({
     
     function fadeOut() {
         container.classList.remove(SHOW);
-        
-
     }
     
     async function onBeforeClose(cb = null) {
-        beforeClose = cb;
+        if (typeof cb === 'function') {
+            beforeCloseCB = cb;
+        }
+        else {
+            beforeCloseCB = function() { 
+                return typeof cb === 'boolean' ? cb : true; 
+            };
+        }
     }
 
-    async function onBeforeConfirm(cb = null) {
-        beforeConfirm = cb;
+    function onBeforeConfirm(cb = null) {
+        if (typeof cb === 'function') {
+            beforeConfirmCB = cb;
+        }
+        else {
+            beforeConfirmCB = function() { 
+                return typeof cb === 'boolean' ? cb : true; 
+            };
+        }
     }
 
     async function onBeforeCancel(cb = null) {
-        beforeCancel = cb;
+        if (typeof cb === 'function') {
+            beforeCancelCB = cb;
+        }
+        else {
+            beforeCancelCB = function() { 
+                return typeof cb === 'boolean' ? cb : true; 
+            };
+        }
     }
 
-    /**
-     * Sets the title of the pop-up 
-     * 
-     * If text is empty title won't be rendered
-     * @param string text 
-     */
     function setTitle(text) {
         if (text === '') { setHidden(titleText); }
         else { titleText.innerHTML = text; }
