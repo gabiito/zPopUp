@@ -30,9 +30,7 @@ zPopUp recibe como parámetro un objeto opcional donde se puede configurar vario
 {
   title, //El título del pop-up ||Def: 'zPopUp Title'
   headerIcon, //Icono que se muestra a la izquierda del título ||Def: null
-  headerBorder, //Borde debajo del header ||Def: true
   showFooter, //Renderiza el footer ||Def: true
-  footerBorder, //Borde encima del footer ||Def: true
   backColor, //Color asignado a la parte de atrás del pop-up'rgba(0,0,0,.4)'
   popUpBackground, //Color de fondo del pop-up ||Def: null => blanco
   color, //Color que se utiliza para fondo de los botones e indicadores ||Def: null => #a88fcf
@@ -47,7 +45,6 @@ zPopUp recibe como parámetro un objeto opcional donde se puede configurar vario
   showPrevButton, //Renderiza el boton de anterior ||Def: false
   prevButtonText, //Asigna el texto para el botón de anterior ||Def: null => '<'
   indicatorType, //Asigna el tipo de indicador a utilizar ||Opciones: 'none'* | 'dot' | 'dash' | 'number'
-  indicatorPosition, //Asigna la posición del indicador ||Opciones: 'header'* | 'footer'
   htmlPages, //Recibe un array con las páginas a agregar al body del pop-up ||Def: []
   html, //Recibe un string conteniendo el html a agregar al body del pop-up ||Def: ''
   width, //Asigna el ancho del pop-up ||Def: null => 500px
