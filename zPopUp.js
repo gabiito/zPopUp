@@ -1,26 +1,29 @@
 function zPopUp({
-    title = '',
-    headerIcon = null,
-    showFooter = true,
-    backColor = 'rgba(0,0,0,.4)',
-    popUpBackground = null,
-    color = null,
     accentColor = null,
+    backColor = 'rgba(0,0,0,.4)',
     buttonTextColor = null,
-    showOkButton = true,
-    okButtonText = null,
-    showCancelButton = true,
     cancelButtonText = null,
-    showNextButton = false,
-    nextButtonText = null,
-    showPrevButton = false,
-    prevButtonText = null,
-    htmlPages = [],
+    color = null,
+    customClass = '',
+    headerBorder = true,
+    headerIcon = null,
     html = '',
+    htmlPages = [],
+    lastPageButtonText = null,
+    mainFont = null,
+    nextButtonText = null,
+    okButtonText = null,
+    outsideClick = 'close',
+    popUpBackground = null,
+    prevButtonText = null,
+    showCancelButton = true,
+    showFooter = true,
+    showNextButton = false,
+    showOkButton = true,
+    showPrevButton = false,
+    title = '',
     width = null,
     zIndex = null,
-    outsideClick = 'close',
-    customClass = ''
 } = {}) {
     //ClasList & HTML declaration
     const clCONTAINER = ['zpopup', 'container'];
@@ -31,22 +34,22 @@ function zPopUp({
     const clHEADER_TITLE = ['zpopup__header__title'];
     const clHEADER_TITLE_ICON = ['zpopup__header__title-icon'];
     const clHEADER_TITLE_TEXT = ['zpopup__header__title-text'];
-    const clINDICATORS = ['zpopup__header__indicators'];
-    const clINDICATORS_DOTS = ['zpopup__header__indicators-dots'];
-    const clINDICATORS_DASHES = ['zpopup__header__indicators-dashes'];
-    const clINDICATORS_NUMBERS = ['zpopup__header__indicators-numbers'];
     const clFOOTER = ['zpopup__footer'];
     const clFOOTER_BUTTONS = ['zpopup__footer__buttons'];
-    const clDOTS = ['zpopup-dot'];
-    const clDASH = ['zpopup-dash'];
-    const clNUMBER = ['zpopup-number'];
     const clBODY = ['zpopup__body'];
     const clBTN_OK = ['zpopup-btn', 'btn-ok'];
     const clBTN_CANCEL = ['zpopup-btn', 'btn-cancel'];
     const clBTN_PREV = ['zpopup-btn', 'btn-prev'];
     const clBTN_NEXT = ['zpopup-btn', 'btn-next'];
-    
+    const clSPINNER_WRAPPER = ['zpopup__spinner__wrapper', 'hidden'];
+    const clSPINNER = ['zpopup-spinner'];
+    const inSPINNER = `<div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div>`;
+    const clALERT_WRAPPER = ['zpopup__alert__wrapper'];
+    const clALERT = ['zpopup__alert'];
+    const clALERT_MSG = ['zpopup__alert-msg'];
+
     //Custom definitions
+    const VAR_FONT = '--zpopup-main-font';
     const VAR_COLOR = '--zpopup-color';
     const VAR_ACCENT_COLOR = '--zpopup-accent-color';
     const VAR_MAIN_BACKGROUND = '--zpopup-main-background';
@@ -56,16 +59,14 @@ function zPopUp({
     const clHIDDEN = 'hidden';
     const div = 'div';
     const btn = 'button';
+    const span = 'span';
     const icon = 'i';
-    const NUMBER_INDICATOR = 'number';
-    const DOT_INDICATOR = 'dot';
-    const DASH_INDICATOR = 'dash';
-    const HEADER_POS = 'header';
-    const FOOTER_POS = 'footer';
     const SHOW = 'show';
     const evtClose = 'close';
     const evtCancel = 'cancel';
     const evtOk = 'ok';
+    const evtNext = 'next';
+    const evtPrev = 'prev';
 
     //Scope variables
     let container;
@@ -82,6 +83,10 @@ function zPopUp({
     let btnCancel;
     let btnNext;
     let btnPrev;
+    let spinnerWrapper;
+    let spinner;
+    let alertWrapper;
+    let alert;
 
     let ppBodyPages = {
         count: 0,
@@ -89,33 +94,58 @@ function zPopUp({
         on: 0
     };
 
-    let beforeCancelCB = function () { return new Promise(resolve => {resolve(true)}); };
-    let beforeConfirmCB = function () { return new Promise(resolve => {resolve(true)}); };
-    let beforeCloseCB = function () { return new Promise(resolve => {resolve(true)}); };
+    let beforeCancelCB = function () {
+        return new Promise(resolve => {
+            resolve(true)
+        });
+    };
+
+    let beforeConfirmCB = function () {
+        return new Promise(resolve => {
+            resolve(true)
+        });
+    };
+
+    let beforeCloseCB = function () {
+        return new Promise(resolve => {
+            resolve(true)
+        });
+    };
+
+    let beforeNextCB = function () {
+        return new Promise(resolve => {
+            resolve(true)
+        });
+    };
+
+    let beforePrevCB = function () {
+        return new Promise(resolve => {
+            resolve(true)
+        });
+    };
 
     /* BEGIN CONSTRUCTOR */
-    (function construct(){
+    (function construct() {
         updateRootVars();
-        if (htmlPages.length > 0) {
-            htmlPages.forEach(page => {
-            addPage(page);
-            });
-        }
-        else if ( html !== '') {
-            addPage(html);
-        }
         container = newElem(div, clCONTAINER);
         container.addEventListener('click', (evt) => {
             if (outsideClick === evtClose && evt.target.classList.contains(clCONTAINER[1])) {
-                closePopUp(evtClose);
+                if (!isAlertVisible()) {
+                    closePopUp(evtClose);
+                }
             }
         });
         mainContent = newElem(div, clMAIN_CONTENT);
-        if (width) { mainContent.style.width = width; }
+        if (width) {
+            mainContent.style.width = width;
+        }
         container.append(mainContent);
 
         //HEADER
         header = newElem(div, clHEADER);
+        if (!headerBorder) {
+            header.style.border = 'none';
+        }
         close = newElem(div, clHEADER_BTN_CLOSE);
         close.innerHTML = inHEADER_BTN_CLOSE_SVG;
         
@@ -130,18 +160,18 @@ function zPopUp({
         setTitle(title);
         titleCont.append(titleIcon);
         titleCont.append(titleText);
-
+        
         header.append(close);
         header.append(titleCont);
-
+        
         mainContent.append(header);
-
+        
         ppBody = newElem(div, clBODY);
-        ppBody.innerHTML = ppBodyPages.count > 0 ? 
-                                ppBodyPages.pages[0] : 
-                                '<h3>Empty HTML!</h3>';
+        ppBody.innerHTML = ppBodyPages.count > 0 ?
+        ppBodyPages.pages[ppBodyPages.on] :
+        '<h3>Empty HTML!</h3>';
         mainContent.append(ppBody);
-
+        
         if (showFooter !== false) {
             footer = newElem(div, clFOOTER);
             footerButtons = newElem(div, clFOOTER_BUTTONS);
@@ -153,88 +183,134 @@ function zPopUp({
                 });
                 footerButtons.append(btnCancel);
             }
-            if (showOkButton) {
-                btnOk = newElem(btn, clBTN_OK, 'zpopup-Ok');
-                btnOk.innerHTML = okButtonText ?? 'OK';
-                btnOk.addEventListener('click', async () => {
-                    closePopUp(evtOk);
-                });
-                footerButtons.append(btnOk);
+            btnOk = newElem(btn, clBTN_OK, 'zpopup-Ok');
+            btnOk.innerHTML = okButtonText ?? 'OK';
+            btnOk.addEventListener('click', async () => {
+                closePopUp(evtOk);
+            });
+            footerButtons.append(btnOk);
+            if (!showOkButton) {
+                btnOk.innerText = lastPageButtonText ?? 'FINISH';
+                setHidden(btnOk);
             }
             if (showPrevButton) {
                 btnPrev = newElem(btn, clBTN_PREV, 'zpopup-prev');
                 if (prevButtonText) {
                     btnPrev.innerHTML = prevButtonText;
-                }
-                else {
+                } else {
                     btnPrev.append(newElem(icon, getIcon(clBTN_PREV[1])));
                 }
+                btnPrev.addEventListener('click', () => {
+                    changePage(evtPrev);
+                });
                 footerButtons.append(btnPrev);
             }
             if (showNextButton) {
                 btnNext = newElem(btn, clBTN_NEXT, 'zpopup-next');
                 if (nextButtonText) {
                     btnNext.innerHTML = nextButtonText;
-                }
-                else {
+                } else {
                     btnNext.append(newElem(icon, getIcon(clBTN_NEXT[1])));
                 }
+                btnNext.addEventListener('click', () => {
+                    changePage(evtNext);
+                });
                 footerButtons.append(btnNext);
             }
             if (footerButtons.childElementCount > 0) {
-
+                
                 footer.append(footerButtons);
             }
         }
         
-        if (footer.childElementCount > 0) {
-            mainContent.append(footer); 
+        if (footer && footer.childElementCount > 0) {
+            mainContent.append(footer);
         }
+        
+        if (htmlPages.length > 0) {
+            htmlPages.forEach(page => {
+                addPage(page);
+            });
+        } else if (html !== '') {
+            addPage(html);
+        }
+
+        //creating spinner
+        spinnerWrapper = newElem(div, clSPINNER_WRAPPER);
+        spinner = newElem(div, clSPINNER);
+        spinner.innerHTML = inSPINNER;
+        spinnerWrapper.append(spinner);
+
     })();
+
     /* END CONSTRUCTOR */
-    
+
     function updateRootVars() {
         const root = document.documentElement;
-        if (color) { root.style.setProperty(VAR_COLOR, color); }
-        if (accentColor) { root.style.setProperty(VAR_ACCENT_COLOR, accentColor); }
-        if (popUpBackground) { root.style.setProperty(VAR_MAIN_BACKGROUND, popUpBackground); }
-        if (buttonTextColor) { root.style.setProperty(VAR_BUTTON_TXT_COLOR, buttonTextColor); }
-        if (width) { root.style.setProperty(VAR_WIDTH, width); }
-        if (zIndex) { root.style.setProperty(VAR_Z_INDEX, zIndex); }
+        if (mainFont) {
+            root.style.setProperty(VAR_FONT, mainFont);
+        }
+        if (color) {
+            root.style.setProperty(VAR_COLOR, color);
+        }
+        if (accentColor) {
+            root.style.setProperty(VAR_ACCENT_COLOR, accentColor);
+        }
+        if (popUpBackground) {
+            root.style.setProperty(VAR_MAIN_BACKGROUND, popUpBackground);
+        }
+        if (buttonTextColor) {
+            root.style.setProperty(VAR_BUTTON_TXT_COLOR, buttonTextColor);
+        }
+        if (width) {
+            root.style.setProperty(VAR_WIDTH, width);
+        }
+        if (zIndex) {
+            root.style.setProperty(VAR_Z_INDEX, zIndex);
+        }
     }
 
     function newElem(elem, classes = [], id = '') {
         const res = document.createElement(elem);
-        classes.forEach(className => {
-            res.classList.add(className);
-        });
-        if (id) { res.id = id; }
+        if (classes.length > 0) {
+            classes.forEach(className => {
+                res.classList.add(className);
+            });
+        }
+        if (id) {
+            res.id = id;
+        }
         return res;
     }
 
-    async function closePopUp(evt = '') { 
+
+    async function closePopUp(evt = '') {
+        let res = false;
         switch (evt) {
             case evtOk:
-                await checkBefore(beforeConfirmCB);
+                res = await checkBefore(beforeConfirmCB);
                 break;
             case evtCancel:
-                await checkBefore(beforeCancelCB);
+                res = await checkBefore(beforeCancelCB);
                 break;
             case evtClose:
-                await checkBefore(beforeCloseCB);
+                res = await checkBefore(beforeCloseCB);
                 break;
-            default: await hide();
+            default:
+                await hide();
+        }
+        if (res === true) {
+            await hide();
         }
     }
 
     async function checkBefore(action) {
         try {
             let res = await action();
-            if (res === true) {
-                await hide();
-            }
-        }
-        catch (err) {
+            return new Promise(resolve => {
+                resolve(res === true)
+            });
+        } catch (err) {
             console.log(err);
         }
     }
@@ -247,35 +323,46 @@ function zPopUp({
             resolve(fadeOut());
         }, timeout));
     }
-    
+
     async function show(timeout = 150) {
         if (!document.querySelector(`.${clCONTAINER.join('.')}`)) {
             document.body.append(container);
+        }
+        if (ppBodyPages.count > 1 && ppBodyPages.on === 0) {
+            setHidden(btnPrev);
+        } else {
+            if (btnPrev) {
+                setVisible(btnPrev);
+            }
         }
         container.classList.add('show')
         return new Promise((resolve) => setTimeout(() => {
             resolve(fadeIn());
         }, timeout));
     }
-    
+
+    function remove() {
+        if (container) {
+            container.remove();
+        }
+    }
+
     function fadeIn() {
         container.style.background = backColor;
         mainContent.style.transform = 'translateY(-10px)';
         mainContent.style.opacity = '1';
-        
     }
-    
+
     function fadeOut() {
         container.classList.remove(SHOW);
     }
-    
+
     async function onBeforeClose(cb = null) {
         if (typeof cb === 'function') {
             beforeCloseCB = cb;
-        }
-        else {
-            beforeCloseCB = function() { 
-                return typeof cb === 'boolean' ? cb : true; 
+        } else {
+            beforeCloseCB = function () {
+                return typeof cb === 'boolean' ? cb : true;
             };
         }
     }
@@ -283,10 +370,9 @@ function zPopUp({
     function onBeforeConfirm(cb = null) {
         if (typeof cb === 'function') {
             beforeConfirmCB = cb;
-        }
-        else {
-            beforeConfirmCB = function() { 
-                return typeof cb === 'boolean' ? cb : true; 
+        } else {
+            beforeConfirmCB = function () {
+                return typeof cb === 'boolean' ? cb : true;
             };
         }
     }
@@ -294,59 +380,90 @@ function zPopUp({
     async function onBeforeCancel(cb = null) {
         if (typeof cb === 'function') {
             beforeCancelCB = cb;
-        }
-        else {
-            beforeCancelCB = function() { 
-                return typeof cb === 'boolean' ? cb : true; 
+        } else {
+            beforeCancelCB = function () {
+                return typeof cb === 'boolean' ? cb : true;
             };
         }
     }
 
+    async function onBeforeNext(cb = null) {
+        if (typeof cb === 'function') {
+            beforeNextCB = cb;
+        } else {
+            beforeNextCB = function () {
+                return typeof cb === 'boolean' ? cb : true;
+            };
+        }
+    }
+
+    async function onBeforePrev(cb = null) {
+        if (typeof cb === 'function') {
+            beforePrevCB = cb;
+        } else {
+            beforePrevCB = function () {
+                return (typeof cb === 'boolean') ? cb : true;
+            };
+        }
+    }
+
+
     function setTitle(text) {
-        if (text === '') { setHidden(titleText); }
-        else { titleText.innerHTML = text; }
+        if (text === '') {
+            setHidden(titleText);
+        } else {
+            titleText.innerText = text;
+        }
     }
 
     function setTitleIcon(ico) {
         if (getIcon(ico) !== '') {
             setVisible(titleIcon);
-            if (titleIcon.childElementCount > 0) { titleIcon.firstElementChild.remove(); }
+            if (titleIcon.childElementCount > 0) {
+                titleIcon.firstElementChild.remove();
+            }
             titleIcon.append(newElem(icon, getIcon(ico)));
-        }
-        else {
+        } else {
             setHidden(titleIcon);
-        } 
+        }
     }
 
     function getIcon(icon) {
         let ico = '';
         switch (icon) {
-            case 'correct': ico = ['zpopup-correct'];
+            case 'correct':
+                ico = ['zpopup-correct'];
                 break;
-            case 'wrong': ico = ['zpopup-wrong'];
+            case 'wrong':
+                ico = ['zpopup-wrong'];
                 break;
-            case 'comment': ico = ['zpopup-comment'];
+            case 'comment':
+                ico = ['zpopup-comment'];
                 break;
-            case 'danger': ico = ['zpopup-danger'];
+            case 'danger':
+                ico = ['zpopup-danger'];
                 break;
-            case 'info': ico = ['zpopup-info'];
+            case 'info':
+                ico = ['zpopup-info'];
                 break;
-            case 'mail': ico = ['zpopup-mail'];
+            case 'mail':
+                ico = ['zpopup-mail'];
                 break;
-            case 'pin': ico = ['zpopup-pin'];
+            case 'pin':
+                ico = ['zpopup-pin'];
                 break;
-            case 'btn-next': ico = ['zpopup-next'];
+            case 'btn-next':
+                ico = ['zpopup-next'];
                 break;
-            case 'btn-prev': ico = ['zpopup-prev'];
+            case 'btn-prev':
+                ico = ['zpopup-prev'];
                 break;
         }
         return ico;
     }
 
-    function addPage(html) {
-        if (!html) { return false; }
-        ppBodyPages.count ++;
-        ppBodyPages.pages.push(html);
+    function getIconsNames() {
+        return ['correct', 'wrong', 'comment', 'danger', 'info', 'mail', 'pin', 'btn-next', 'btn-prev'];
     }
 
     function setHidden(elem) {
@@ -357,12 +474,189 @@ function zPopUp({
         elem.classList.remove(clHIDDEN);
     }
 
+    function setButtonText(btn, text) {
+        if (text === '') {
+            return;
+        }
+        switch (btn) {
+            case clBTN_OK[1]:
+                btnOk.innerText = text;
+                break;
+            case clBTN_CANCEL[1]:
+                btnCancel.innerText = text;
+                break;
+            case clBTN_NEXT[1]:
+                btnNext.innerText = text;
+                break;
+            case clBTN_PREV[1]:
+                btnPrev.innerText = text;
+        }
+    }
+
+    function showAlert(msg = '', {
+        ico = null,
+        timeout = 4
+    } = {}) {
+        if (msg === '') {
+            return;
+        }
+        alertWrapper = newElem(div, clALERT_WRAPPER);
+        alert = newElem(div, clALERT);
+        if (ico) {
+            let i = newElem(icon, getIcon(ico));
+            alert.append(i);
+        }
+        let m = newElem(span, clALERT_MSG);
+        m.innerText = msg;
+        alert.append(m);
+        alertWrapper.append(alert);
+        mainContent.append(alertWrapper);
+        setTimeout(() => {
+            alertWrapper.remove();
+        }, timeout * 1000);
+    }
+
+    function isAlertVisible() {
+        let res = false;
+        mainContent.childNodes.forEach(child => {
+            if (child.classList.contains(clALERT_WRAPPER[0])) {
+                res = true;
+            }
+        })
+        return res;
+    }
+
+    function addPage(html) {
+        if (!html) {
+            return false;
+        }
+        if (isLastPage()) {
+            console.log('last page');
+            setVisible(btnNext);
+            setHidden(btnOk);
+        }
+        ppBodyPages.count++;
+        ppBodyPages.pages.push(html);
+        return true;
+    }
+
+    async function changePage(direction) {
+        if (direction === evtNext) {
+            await showSpinner();
+            let res = await checkBefore(beforeNextCB)
+            if (res === true) {
+                nextPage();
+                setVisible(btnPrev);
+            }
+            hideSpinner();
+        } else if (direction === evtPrev) {
+            await showSpinner();
+            let res = await checkBefore(beforePrevCB)
+            if (res === true) {
+                prevPage();
+            }
+            if (ppBodyPages.on === 0) {
+                setHidden(btnPrev);
+            } else {
+                setVisible(btnPrev);
+            }
+
+            hideSpinner();
+        }
+    }
+
+    function showSpinner() {
+        let exist = false;
+        mainContent.childNodes.forEach(node => {
+            if (node === spinnerWrapper) {
+                exist = true;
+            }
+        });
+        if (!exist) {
+            mainContent.append(spinnerWrapper);
+        }
+        return new Promise(resolve => {
+            setVisible(spinnerWrapper);
+            setTimeout(() => {
+                spinner.style.opacity = '1';
+                resolve(true);
+            }, 100);
+        });
+    }
+
+    function hideSpinner() {
+        spinner.style.opacity = '0';
+        setTimeout(() => {
+            setHidden(spinnerWrapper);
+        }, 200);
+    }
+
+    function getPageID() {
+        return ppBodyPages.on;
+    }
+
+    function getPageCount() {
+        return ppBodyPages.count;
+    }
+
+    function hasNextPage() {
+        return ppBodyPages.count - 1 > ppBodyPages.on;
+    }
+
+    function hasPrevPage() {
+        return ppBodyPages.on > 0;
+    }
+
+    function isLastPage() {
+        return ppBodyPages.on + 1 === ppBodyPages.count;
+    }
+
+    function nextPage() {
+        if (hasNextPage()) {
+            ppBodyPages.on++;
+            ppBody.innerHTML = ppBodyPages.pages[ppBodyPages.on];
+            if (isLastPage()) {
+                setVisible(btnOk);
+                setHidden(btnNext);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function prevPage() {
+        if (hasPrevPage()) {
+            ppBodyPages.on--;
+            ppBody.innerHTML = ppBodyPages.pages[ppBodyPages.on];
+            if (!isLastPage()) {
+                setHidden(btnOk);
+                setVisible(btnNext);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return {
-        show: show,
+        addPage: addPage,
+        avaibleIcons: getIconsNames,
+        getPageID: getPageID,
+        getPageCount: getPageCount,
+        hide: hide,
+        hideSpinner: hideSpinner,
+        onBeforeCancel: onBeforeCancel,
         onBeforeClose: onBeforeClose,
         onBeforeConfirm: onBeforeConfirm,
-        onBeforeCancel: onBeforeCancel,
+        onBeforeNext: onBeforeNext,
+        onBeforePrev: onBeforePrev,
+        remove: remove,
         setTitle: setTitle,
-        setTitleIcon: setTitleIcon
+        setTitleIcon: setTitleIcon,
+        setButtonText: setButtonText,
+        show: show,
+        showAlert: showAlert,
+        showSpinner: showSpinner
     }
 }

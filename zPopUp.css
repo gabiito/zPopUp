@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-
 :root {
+    --zpopup-main-font: inherit;
     --zpopup-color: #a88fcf;
     --zpopup-accent-color: #792d83;
     --zpopup-main-background: #fff;
@@ -25,7 +24,7 @@
 }
 
 .zpopup.main-content {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--zpopup-main-font);
     width: var(--zpopup-width);
     max-height: fit-content;
     background-color: var(--zpopup-main-background);
@@ -34,13 +33,15 @@
     place-self: center;
     display: none;
     opacity: 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .zpopup.container.show .zpopup.main-content {
     display: grid;
     grid-template-rows: auto 3fr auto;
     transition: transform 250ms linear,
-                opacity 120ms linear;
+        opacity 120ms linear;
 }
 
 /*COMMON*/
@@ -78,7 +79,9 @@
 .zpopup-btn {
     background: var(--zpopup-color);
     color: var(--zpopup-button-text-color);
+    height: 40px;
     font-size: 16px;
+    line-height: 16px;
     border: 0px;
     border-radius: 4px;
     padding: 8px 16px;
@@ -110,8 +113,9 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    width: 20px;
+    width: 28px;
     height: 20px;
+    font-size: 20px;
     padding: 5px;
     cursor: pointer;
 }
@@ -127,6 +131,7 @@
     display: grid;
     grid-template-columns: 1fr auto;
     width: fit-content;
+    max-width: 90%;
     gap: 15px;
     margin: 0 auto;
     align-items: center;
@@ -139,7 +144,7 @@
 
 .zpopup__indicators-dots,
 .zpopup__indicators-dashes,
-.zpopup__indicators-numbers{
+.zpopup__indicators-numbers {
     padding: 10px 0;
     width: 100%;
     height: 14px;
@@ -172,7 +177,8 @@
 .zpopup__indicators-dashes.hidden,
 .zpopup__indicators-numbers.hidden,
 .zpopup__footer__buttons.hidden,
-.zpopup__footer__buttons .hidden {
+.zpopup__footer__buttons .hidden,
+.zpopup__spinner__wrapper.hidden {
     display: none;
 }
 
@@ -181,6 +187,37 @@
     padding: 10px 0;
 }
 
+/*ALERT SETUP*/
+.zpopup__alert__wrapper {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-content: center;
+    place-items: center;
+    position: absolute;
+    background-color: rgba(200, 200, 200, .5);
+}
+
+.zpopup__alert {
+    background-color: var(--zpopup-main-background);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 30px 20px;
+    position: relative;
+    border: 1px solid #333;
+    border-radius: 6px;
+    max-width: 90%;
+}
+
+.zpopup__alert .zpopup__alert-msg {
+    font-size: 15px;
+}
+
+.zpopup__alert i {
+    width: 25px;
+}
 
 /*CUSTOM ICONS*/
 
@@ -188,12 +225,12 @@
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 22px;
     height: 22px;
     border: 2px solid transparent;
     border-radius: 100px
 }
+
 .zpopup-next::after {
     content: "";
     display: block;
@@ -212,12 +249,12 @@
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 22px;
     height: 22px;
     border: 2px solid transparent;
     border-radius: 100px
 }
+
 .zpopup-prev::after {
     content: "";
     display: block;
@@ -236,7 +273,7 @@
     box-sizing: border-box;
     position: relative;
     display: block;
-    
+
     width: 22px;
     height: 22px;
     border: 2px solid;
@@ -263,7 +300,6 @@
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 22px;
     height: 22px;
     border: 2px solid;
@@ -293,55 +329,53 @@
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 20px;
     height: 16px;
     border: 2px solid;
     border-bottom: 0;
     box-shadow:
-    -6px 8px 0 -6px,
-    6px 8px 0 -6px
-   }
-   
-   .zpopup-comment::after,
-   .zpopup-comment::before {
+        -6px 8px 0 -6px,
+        6px 8px 0 -6px
+}
+
+.zpopup-comment::after,
+.zpopup-comment::before {
     content: "";
     display: block;
     box-sizing: border-box;
     position: absolute;
     width: 8px
-   }
-   
-   .zpopup-comment::before {
+}
+
+.zpopup-comment::before {
     border: 2px solid;
     border-top-color: transparent;
     border-bottom-left-radius: 20px;
     right: 4px;
     bottom: -6px;
     height: 6px
-   }
-   
-   .zpopup-comment::after {
+}
+
+.zpopup-comment::after {
     height: 2px;
     background: currentColor;
     box-shadow: 0 4px 0 0;
     left: 4px;
     top: 4px
-   } 
+}
 
-   .zpopup-danger {
+.zpopup-danger {
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 20px;
     height: 20px;
     border: 2px solid;
     border-radius: 40px
-   }
-   
-   .zpopup-danger::after,
-   .zpopup-danger::before {
+}
+
+.zpopup-danger::after,
+.zpopup-danger::before {
     content: "";
     display: block;
     box-sizing: border-box;
@@ -350,31 +384,30 @@
     width: 2px;
     background: currentColor;
     left: 7px
-   }
-   
-   .zpopup-danger::after {
+}
+
+.zpopup-danger::after {
     top: 2px;
     height: 8px
-   }
-   
-   .zpopup-danger::before {
+}
+
+.zpopup-danger::before {
     height: 2px;
     bottom: 2px
-   } 
+}
 
-   .zpopup-info {
+.zpopup-info {
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 20px;
     height: 20px;
     border: 2px solid;
     border-radius: 40px
-   }
-   
-   .zpopup-info::after,
-   .zpopup-info::before {
+}
+
+.zpopup-info::after,
+.zpopup-info::before {
     content: "";
     display: block;
     box-sizing: border-box;
@@ -383,35 +416,34 @@
     width: 2px;
     background: currentColor;
     left: 7px
-   }
-   
-   .zpopup-info::after {
+}
+
+.zpopup-info::after {
     bottom: 2px;
     height: 8px
-   }
-   
-   .zpopup-info::before {
+}
+
+.zpopup-info::before {
     height: 2px;
     top: 2px
-   } 
+}
 
-   .zpopup-mail,
-   .zpopup-mail::after {
+.zpopup-mail,
+.zpopup-mail::after {
     display: block;
     box-sizing: border-box;
     height: 14px;
     border: 2px solid
-   }
-   
-   .zpopup-mail {
+}
+
+.zpopup-mail {
     overflow: hidden;
-    
     position: relative;
     width: 18px;
     border-radius: 2px
-   }
-   
-   .zpopup-mail::after {
+}
+
+.zpopup-mail::after {
     content: "";
     position: absolute;
     border-radius: 3px;
@@ -419,9 +451,9 @@
     transform: rotate(-45deg);
     bottom: 3px;
     left: 0
-   } 
+}
 
-   .zpopup-pin {
+.zpopup-pin {
     box-sizing: border-box;
     position: relative;
     display: block;
@@ -431,9 +463,9 @@
     border-radius: 100% 100% 0 100%;
     border: 2px solid;
     margin-top: -4px
-   }
-   
-   .zpopup-pin::before {
+}
+
+.zpopup-pin::before {
     content: "";
     display: block;
     box-sizing: border-box;
@@ -444,20 +476,19 @@
     top: 3px;
     left: 3px;
     border-radius: 40px
-   } 
+}
 
-   .zpopup-check {
+.zpopup-check {
     box-sizing: border-box;
     position: relative;
     display: block;
-    
     width: 22px;
     height: 22px;
     border: 2px solid transparent;
     border-radius: 100px
-   }
-   
-   .zpopup-check::after {
+}
+
+.zpopup-check::after {
     content: "";
     display: block;
     box-sizing: border-box;
@@ -470,4 +501,83 @@
     border-style: solid;
     transform-origin: bottom left;
     transform: rotate(45deg)
-   } 
+}
+
+/*SPINNER*/
+.zpopup__spinner__wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(200, 200, 200, .6);
+    display: grid;
+    place-content: center;
+}
+
+.zpopup-spinner {
+    margin: 100px auto;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 10px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 100ms linear;
+}
+
+.zpopup-spinner>div {
+    background-color: var(--zpopup-accent-color);
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.zpopup-spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+.zpopup-spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+.zpopup-spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.zpopup-spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4)
+    }
+
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
+}
+
+@keyframes sk-stretchdelay {
+
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+
+    20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+    }
+}
