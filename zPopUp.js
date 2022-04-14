@@ -167,9 +167,6 @@ function zPopUp({
         mainContent.append(header);
         
         ppBody = newElem(div, clBODY);
-        ppBody.innerHTML = ppBodyPages.count > 0 ?
-        ppBodyPages.pages[ppBodyPages.on] :
-        '<h3>Empty HTML!</h3>';
         mainContent.append(ppBody);
         
         if (showFooter !== false) {
@@ -227,6 +224,7 @@ function zPopUp({
             mainContent.append(footer);
         }
         
+        //set body content
         if (htmlPages.length > 0) {
             htmlPages.forEach(page => {
                 addPage(page);
@@ -234,6 +232,10 @@ function zPopUp({
         } else if (html !== '') {
             addPage(html);
         }
+
+        ppBody.innerHTML = ppBodyPages.count > 0 ?
+            ppBodyPages.pages[ppBodyPages.on] :
+            '<h3>Empty HTML!</h3>';
 
         //creating spinner
         spinnerWrapper = newElem(div, clSPINNER_WRAPPER);
